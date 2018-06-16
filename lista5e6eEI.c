@@ -7,6 +7,7 @@ struct no{
 	struct no* e;
 	struct no* d;
 };
+//ksjdlasdkjaskdj
 struct no* novono(int info) {
 	struct no* no = (struct no*)
 	malloc(sizeof(struct no));
