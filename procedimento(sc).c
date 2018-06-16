@@ -1,0 +1,20 @@
+#include<stdio.h>
+#include<stdlib.h>
+//Código por Giovani Henriques - ED para SI(2018.1) Prof. Cristina Boeres
+
+void nivelamento (struct no *n){
+  if (!n->e && !n->d) {
+		n->nvl = -1;
+		return;
+	}
+	if(n->e) nivelamento(n->e);
+	if(n->d) nivelamento(n->d);
+	if(n->e && n->d) {
+		if(n->e->nvl > n->d->nvl) n->nvl = n->e->nvl+1;
+		else  n->nvl = n->d->nvl+1;
+	}
+	else{
+		if(n->e) n->nvl = n->e->nvl + 1;
+		else n->nvl = n->d->nvl + 1 ;
+	}
+}
