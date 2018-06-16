@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//Estrutura da árvore binária
+//Estrutura da árvore binária (EI e2la)
 struct no{
 	int info, nvl, prof;
 	struct no* e;
 	struct no* d;
 };
-//ksjdlasdkjaskdj
+//algoritmo que cria novo no
 struct no* novono(int info) {
 	struct no* no = (struct no*)
 	malloc(sizeof(struct no));
