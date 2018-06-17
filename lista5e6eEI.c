@@ -3,7 +3,7 @@
 
 /*Exercícios que faltam
 Lista 5: 2, 6
-Lista 6: */
+Lista 6: 4*/
 
 
 //Estrutura da árvore binária (EI e2la)
@@ -46,7 +46,7 @@ struct no* busca(struct no* raiz, int n){
 		if (raiz->info > n) return busca(raiz->e, n);
 	}
 
-//Função para atribuir a profundidade a todos os nós
+//Função para atribuir a profundidade a todos os nós (EIe2ld)
 void profundidade(struct no *n){
 	if(n->e) {n->e->prof = n->prof+1;profundidade(n->e);}
 	if(n->d) {n->d->prof = n->prof+1;profundidade(n->d);}
@@ -61,7 +61,7 @@ int ralt(struct no *n){
 	if (alte > altd) return alte+1; else return altd+1;
 }
 
-//Função para retornar a proundidade de determinado nó
+//Função para retornar a proundidade de determinado nó (EIe2ld)
 int rprof(struct no *raiz, int n){
 	struct no* no = busca(raiz, n);
 	n = no->prof;
@@ -100,7 +100,7 @@ struct no* insere(struct no *no, int n){
 	nivelamento(no);
 }
 
-//Função que retornar o menor valor da árvore
+//Função que retornar o menor valor da árvore (L6e1)
 struct no* minvalue(struct no* no){
     while (no->e != NULL)
         no = no->e;
@@ -153,14 +153,14 @@ struct no* remover(struct no* no, int n){
     return no;
 }
 
-//Função que retornar o maior valor da árvore
+//Função que retornar o maior valor da árvore (L6e2)
 struct no* maxvalue(struct no* no){
     while (no->d != NULL)
         no = no->d;
     return no;
 }
 
-//Função que retorna o próximo nó com valor maior dado nó
+//Função que retorna o próximo nó com valor maior dado nó (L6e3)
 struct no* next(struct no* no){
 	if (no->d) {
 		no = no->d;
@@ -173,7 +173,7 @@ struct no* next(struct no* no){
 
 }
 
-//Função que retorna o próximovalor maior dado nó
+//Função que retorna o próximovalor maior dado nó (L6e3)
 int rnext(struct no* no){
 	if (no->d) {
 		no = no->d;
@@ -185,7 +185,7 @@ int rnext(struct no* no){
 	else return no->info;
 }
 
-//Função que retorna o nó com valor imediatamente menor dado um nó
+//Função que retorna o nó com valor imediatamente menor dado um nó (L6e5)
 struct no* previous(struct no* no){
 	if (no->e) {
 		no = no->e;
@@ -197,7 +197,20 @@ struct no* previous(struct no* no){
 	else return no;
 }
 
-//Função que retorna o valor imediatamente menor dado um nó
+//Função que encontra o nó com valor imediatamente menor dado um nó e o remove (L6e5)
+struct no* removeprv(struct no* no){
+	if (no->e) {
+		no = no->e;
+		while (no->d) {
+			no = no->d;
+		}
+		remover(no, no->info);
+		return;
+	}
+	else return no;
+}
+
+//Função que retorna o valor imediatamente menor dado um nó (L6e5)
 int rprevious(struct no* no){
 	if (no->e) {
 		no = no->e;
@@ -225,12 +238,12 @@ int tam(struct no* no){
 int fpre(struct no *n){
 	if (n->prof === 0) return n->info;
 }
-//Função para retornar o primeiro nó de em ordem
+//Função para retornar o primeiro nó de em ordem (L5e5)
 int fem(struct no *n){
 	if(n->e) return fem(n->e);
 	if(!n->e) return n->info;
 }
-//Função para retornar o primeiro nó da pós-ordem
+//Função para retornar o primeiro nó da pós-ordem (L5e5)
 int fpos(struct no *n){
 	if(n->e) return fpos(n->e);
 	if(!n->e) return n->info;
@@ -271,6 +284,8 @@ void minmax(struct no *n,	int *a, int *b){
 int main(int argc, char const *argv[]) {
 	int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 	//int n = sizeof(arr)/sizeof(arr[0]);
+
+	//Sequência de inserções e remoções solicitadas no (EIe2lc)
 	struct no *raiz = novono(50);
 	insere(raiz, 30);
 	insere(raiz, 2);
