@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /*Exercícios que faltam
-Lista 5: 2, 6
+Lista 5: 6
 Lista 6: 4*/
 
 
