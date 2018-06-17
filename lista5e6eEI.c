@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*Exercícios que faltam
+Lista 5: 2, 6
+Lista 6: */
+
+
 //Estrutura da árvore binária (EI e2la)
 struct no{
 	int info, nvl, prof;
 	struct no* e;
 	struct no* d;
 };
+
 //algoritmo que cria novo no
 struct no* novono(int info) {
 	struct no* no = (struct no*)
@@ -17,6 +23,7 @@ struct no* novono(int info) {
 	no->prof = 0;
 	return no;
 }
+
 //Função que cria uma árvore balanceada dado um array ordenado
 struct no* arrarv(int arr[], int ini, int fim) {
 	//Caso base
@@ -31,27 +38,37 @@ struct no* arrarv(int arr[], int ini, int fim) {
 	raiz->d = arrarv(arr, meio+1, fim);
 	return raiz;
 }
+
+//Função de busca na árvore (EI e2lb)
 struct no* busca(struct no* raiz, int n){
 		if (raiz == NULL || raiz->info == n) return raiz;
 		if (raiz->info < n) return busca(raiz->d, n);
 		if (raiz->info > n) return busca(raiz->e, n);
 	}
+
+//Função para atribuir a profundidade a todos os nós
 void profundidade(struct no *n){
 	if(n->e) {n->e->prof = n->prof+1;profundidade(n->e);}
 	if(n->d) {n->d->prof = n->prof+1;profundidade(n->d);}
 	return;
 }
+
+//Função para retornar a altura da árvore
 int ralt(struct no *n){
   if(n == NULL) return -1;
   int alte = ralt(n->e);
 	int altd = ralt(n->d);
 	if (alte > altd) return alte+1; else return altd+1;
 }
+
+//Função para retornar a proundidade de determinado nó
 int rprof(struct no *raiz, int n){
 	struct no* no = busca(raiz, n);
 	n = no->prof;
 	return n;
 }
+
+//Função recursiva para determinar o nível de um nó na árvore
 void nivelamento (struct no *n){
   if (!n->e && !n->d) {   //Verifica se o nó é folha(não possui filhos), caso for o nível recebido é -1 e o procedimento termina
 		n->nvl = -1;
@@ -68,8 +85,10 @@ void nivelamento (struct no *n){
 		else n->nvl = n->d->nvl + 1 ;//Verifica se é um filho da direita e atribui seu nível + 1
 	}
 }
+
 void troca(struct no *n){
 }
+//Função para inserir um nó na árvore (EI e2lb)
 struct no* insere(struct no *no, int n){
   if (no == NULL) return novono(n);
   if (n < no->info)
@@ -80,11 +99,15 @@ struct no* insere(struct no *no, int n){
 	profundidade(no);
 	nivelamento(no);
 }
+
+//Função que retornar o menor valor da árvore
 struct no* minvalue(struct no* no){
     while (no->e != NULL)
         no = no->e;
     return no;
 }
+
+//Função para remover um nó na árvore (EI e2lb)
 struct no* remover(struct no* no, int n){
     // base case
     if (no == NULL) return no;
@@ -129,11 +152,15 @@ struct no* remover(struct no* no, int n){
     }
     return no;
 }
+
+//Função que retornar o maior valor da árvore
 struct no* maxvalue(struct no* no){
     while (no->d != NULL)
         no = no->d;
     return no;
 }
+
+//Função que retorna o próximo nó com valor maior dado nó
 struct no* next(struct no* no){
 	if (no->d) {
 		no = no->d;
@@ -145,6 +172,8 @@ struct no* next(struct no* no){
 	else return no;
 
 }
+
+//Função que retorna o próximovalor maior dado nó
 int rnext(struct no* no){
 	if (no->d) {
 		no = no->d;
@@ -155,6 +184,8 @@ int rnext(struct no* no){
 	}
 	else return no->info;
 }
+
+//Função que retorna o nó com valor imediatamente menor dado um nó
 struct no* previous(struct no* no){
 	if (no->e) {
 		no = no->e;
@@ -165,6 +196,8 @@ struct no* previous(struct no* no){
 	}
 	else return no;
 }
+
+//Função que retorna o valor imediatamente menor dado um nó
 int rprevious(struct no* no){
 	if (no->e) {
 		no = no->e;
@@ -175,47 +208,55 @@ int rprevious(struct no* no){
 	}
 	else return no->info;
 }
+
+//Função que retornar o número de nós da árvore(L5e3)
 int h;
 int contanos(struct no* n){
 	if(n->e){h++;contanos(n->e);}
 	if(n->d){h++;contanos(n->d);}
 	return h;
 }
-int numnos(struct no* no){
+int tam(struct no* no){
 	if (h!=0) h=0;
 	return contanos(no);
 }
+
+//Função para retornar o primeiro nó da pré-ordem (L5e5)
 int fpre(struct no *n){
-	return n->info;
+	if (n->prof === 0) return n->info;
 }
+//Função para retornar o primeiro nó de em ordem
 int fem(struct no *n){
 	if(n->e) return fem(n->e);
 	if(!n->e) return n->info;
 }
+//Função para retornar o primeiro nó da pós-ordem
 int fpos(struct no *n){
 	if(n->e) return fpos(n->e);
 	if(!n->e) return n->info;
 }
+
 //Função para imprimir em pré-ordem (visita, e, d)
 void pre(struct no* no) {
 	if (no == NULL) return;
-	printf("%d(%d) ", no->info, no->nvl);
+	printf("%d ", no->info);
 	pre(no->e);
 	pre(no->d);
 }
 //Função para imprimir em ordem (e, visita, d)
 void em(struct no * n){
 	if(n->e) em(n->e);
-	printf("%d(%d) ", n->info, n->nvl);
+	printf("%d ", n->info);
 	if(n->d) em(n->d);
 }
 //Função para imprimir em pós-ordem (e, d, visita)
 void pos(struct no * n){
 	if(n->e) pos(n->e);
 	if(n->d) pos(n->d);
-	printf("%d(%d) ", n->info, n->nvl);
+	printf("%d ", n->info);
 }
-//Função recursiva para determinar o nível de um nó na árvore
+
+//Função que retornar o valor minimo e o máximo da árvore (L5e4)
 void minmax(struct no *n,	int *a, int *b){
 	struct no *min;
 	struct no *max;
