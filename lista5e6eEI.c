@@ -86,11 +86,15 @@ void nivelamento (struct no *n){
 	}
 }
 
-//Função que imprimi os nos por nível(L5e2)
+//Função que imprimi os nós por nível(L5e2)
 void impriminvl (struct no* n, int nvl){
 	if (n->nvl == nvl) printf("%d ", n->info);
 	if (n->e) impriminvl(n->e, nvl);
 	if (n->d) impriminvl(n->d, nvl);
+}
+void printperlvl (struct no* no){
+	int n = -1;
+	while (n<=no->nvl) {impriminvl(no, n);n++;}
 }
 
 void troca(struct no *n){
@@ -319,7 +323,7 @@ int main(int argc, char const *argv[]) {
 	printf("\n\n");
 	printf("%d", fpos(raiz));
 	printf("\n\n");
-	for (size_t i = -1; i < 3; i++) impriminvl(raiz, i)
+	printperlvl(raiz);
 	printf("\n\n");
   return 0;
 }
