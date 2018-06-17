@@ -9,6 +9,7 @@ Lista 6: 4*/
 //Estrutura da árvore binária (EI e2la)
 struct no{
 	int info, nvl, prof;
+	char op;
 	struct no* e;
 	struct no* d;
 };
@@ -170,6 +171,16 @@ struct no* maxvalue(struct no* no){
     while (no->d != NULL)
         no = no->d;
     return no;
+}
+
+//Função que retorna valor total de uma árvore artimética (L5e6)
+int valtree (struct no *n){
+  if(n->info == NULL || n->info == 0)
+		if(n->op == '+') return valtree(n->e) + valtree(n->d);
+		if(n->op == '*') return valtree(n->e) * valtree(n->d);
+		if(n->op == '-') return valtree(n->e) - valtree(n->d);
+		if(n->op == '/') return valtree(n->e) / valtree(n->d);
+	else return n->info;
 }
 
 //Função que retorna o próximo nó com valor maior dado nó (L6e3)
