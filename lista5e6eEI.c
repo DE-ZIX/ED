@@ -68,7 +68,7 @@ int rprof(struct no *raiz, int n){
 	return n;
 }
 
-//Função recursiva para determinar o nível de um nó na árvore
+//Função recursiva para determinar o nível de um nó na árvore(L5e1)
 void nivelamento (struct no *n){
   if (!n->e && !n->d) {   //Verifica se o nó é folha(não possui filhos), caso for o nível recebido é -1 e o procedimento termina
 		n->nvl = -1;
@@ -86,8 +86,16 @@ void nivelamento (struct no *n){
 	}
 }
 
+//Função que imprimi os nos por nível(L5e2)
+void impriminvl (struct no* n, int nvl){
+	if (n->nvl == nvl) printf("%d ", n->info);
+	if (n->e) impriminvl(n->e, nvl);
+	if (n->d) impriminvl(n->d, nvl);
+}
+
 void troca(struct no *n){
 }
+
 //Função para inserir um nó na árvore (EI e2lb)
 struct no* insere(struct no *no, int n){
   if (no == NULL) return novono(n);
@@ -312,7 +320,7 @@ int main(int argc, char const *argv[]) {
 	printf("\n\n");
 	printf("%d", fpos(raiz));
 	printf("\n\n");
-
+	for (size_t i = -1; i < 3; i++) impriminvl(raiz, i) 
 	printf("\n\n");
   return 0;
 }
