@@ -25,6 +25,18 @@ struct no* novono(int info) {
 	return no;
 }
 
+//algoritmo que cria operando
+struct no* novop(int info, char op) {
+	struct no* no = (struct no*)
+	malloc(sizeof(struct no));
+	no->info = info;
+	no->op = op;
+	no->e = NULL;
+	no->d = NULL;
+	no->prof = 0;
+	return no;
+}
+
 //Função que cria uma árvore balanceada dado um array ordenado
 struct no* arrarv(int arr[], int ini, int fim) {
 	//Caso base
@@ -254,6 +266,11 @@ int contanos(struct no* n){
 int tam(struct no* no){
 	if (h!=0) h=0;
 	return contanos(no);
+}
+
+//Função para criar árvore artimética
+void cartree(int info, char op){
+
 }
 
 //Função para retornar o primeiro nó da pré-ordem (L5e5)
