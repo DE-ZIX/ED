@@ -1,0 +1,8 @@
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c: In function 'fpre':
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c:246:16: error: expected expression before '=' token
+  if (n->prof === 0) return n->info;
+                ^
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c: In function 'main':
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c:323:2: error: expected ';' before 'printf'
+  printf("\n\n");
+  ^~~~~~

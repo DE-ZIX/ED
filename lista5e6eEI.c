@@ -213,7 +213,6 @@ struct no* removeprv(struct no* no){
 			no = no->d;
 		}
 		remover(no, no->info);
-		return;
 	}
 	else return no;
 }
@@ -244,7 +243,7 @@ int tam(struct no* no){
 
 //Função para retornar o primeiro nó da pré-ordem (L5e5)
 int fpre(struct no *n){
-	if (n->prof === 0) return n->info;
+	if (n->prof == 0) return n->info;
 }
 //Função para retornar o primeiro nó de em ordem (L5e5)
 int fem(struct no *n){
@@ -320,7 +319,7 @@ int main(int argc, char const *argv[]) {
 	printf("\n\n");
 	printf("%d", fpos(raiz));
 	printf("\n\n");
-	for (size_t i = -1; i < 3; i++) impriminvl(raiz, i) 
+	for (size_t i = -1; i < 3; i++) impriminvl(raiz, i)
 	printf("\n\n");
   return 0;
 }
