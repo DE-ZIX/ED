@@ -268,9 +268,37 @@ int tam(struct no* no){
 	return contanos(no);
 }
 
-//Função para criar árvore artimética
-void cartree(int info, char op){
+//subfunção para verificar se o nó é operador
+bool isOperator(char c){
+    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') return true;
+    return false;
+}
 
+//Função para criar árvore artimética
+void insertop(){novop();}
+
+int cartree (char exp[]){
+	char opstack[strlen(exp)];
+	int n=0, search[10];
+	for (size_t i = 0; i < strlen(exp); i++) {
+		if(isOperator(exp[i])) {opstack[n]=exp[i];search[n]=i;n++;}
+	}
+	//obs, código cheio de erros, só colocou para entender a lógica e continuar dps
+	struct no* expraiz = novop(opstackn/2);
+	expraiz->e = novoop(opstack[n/2 -1]);
+	expraiz->d = novoop(opstack[n/2 +1]);
+	if (opstack(n-1)==0 || opstack(n+1) == n) {
+		struct no* no = novoop(exp(search[n]));
+		no->e = novono(exp(search[n]-1));
+		no->d = novono(exp(search[n]+1));
+	}
+	opstack[n/2];
+	for (size_t i = 0; i < strlen(exp); i++) {
+		if (!isOperator(exp[i])) {novop} //Número
+		else /*operador*/{
+
+		}
+	}
 }
 
 //Função para retornar o primeiro nó da pré-ordem (L5e5)
