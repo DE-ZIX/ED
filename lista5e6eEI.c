@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*Exercícios que faltam
 Lista 5: 6
@@ -19,6 +20,7 @@ struct no* novono(int info) {
 	struct no* no = (struct no*)
 	malloc(sizeof(struct no));
 	no->info = info;
+	no->op = '\0';
 	no->e = NULL;
 	no->d = NULL;
 	no->prof = 0;
@@ -26,10 +28,10 @@ struct no* novono(int info) {
 }
 
 //algoritmo que cria operando
-struct no* novop(int info, char op) {
+struct no* novop(char op) {
 	struct no* no = (struct no*)
 	malloc(sizeof(struct no));
-	no->info = info;
+	no->info = 0;
 	no->op = op;
 	no->e = NULL;
 	no->d = NULL;
@@ -187,12 +189,11 @@ struct no* maxvalue(struct no* no){
 
 //Função que retorna valor total de uma árvore artimética (L5e6)
 int valtree (struct no *n){
-  if(n->info == NULL || n->info == 0)
-		if(n->op == '+') return valtree(n->e) + valtree(n->d);
-		if(n->op == '*') return valtree(n->e) * valtree(n->d);
-		if(n->op == '-') return valtree(n->e) - valtree(n->d);
-		if(n->op == '/') return valtree(n->e) / valtree(n->d);
-	else return n->info;
+		if(n->op == '+' && n->e && n->d) return valtree(n->e) + valtree(n->d);
+		if(n->op == '*' && n->e && n->d) return valtree(n->e) * valtree(n->d);
+		if(n->op == '-' && n->e && n->d) return valtree(n->e) - valtree(n->d);
+		if(n->op == '/' && n->e && n->d) return valtree(n->e) / valtree(n->d);
+		return n->info;
 }
 
 //Função que retorna o próximo nó com valor maior dado nó (L6e3)
@@ -268,37 +269,79 @@ int tam(struct no* no){
 	return contanos(no);
 }
 
+//Função para criar árvore artimética
+//subfunção para criar um no
+struct no* constructfOpNode(char op, int num1, int num2){
+	struct no* n = novop(op);
+	n->e = novono(num1);
+	n->d = novono(num2);
+	return n;
+}
 //subfunção para verificar se o nó é operador
-bool isOperator(char c){
-    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') return true;
-    return false;
+int isOperator(char c){
+    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') return 1;
+    return 0;
 }
 
-//Função para criar árvore artimética
-void insertop(){novop();}
+struct no* creatExptree(){
+	struct no* raiz;
+	char op;
+	printf("Digite o operador: ");
+	scanf(" %c", &op);
+	if (isOperator(op) == 0) return novono(op - '0');
+	else raiz = novop(op);
+	printf("Digite o num1: ");
+	scanf(" %c", &op);
+	if (isOperator(op)) {raiz->e = creatExptree();}
+	else raiz->e = novono(op - '0');
+	printf("Digite o num2: ");
+	scanf(" %c", &op);
+	if (isOperator(op)) {raiz->d = creatExptree();}
+	else raiz->d = novono(op - '0');
+	return raiz;
+}
 
-int cartree (char exp[]){
-	char opstack[strlen(exp)];
-	int n=0, search[10];
-	for (size_t i = 0; i < strlen(exp); i++) {
-		if(isOperator(exp[i])) {opstack[n]=exp[i];search[n]=i;n++;}
-	}
-	//obs, código cheio de erros, só colocou para entender a lógica e continuar dps
-	struct no* expraiz = novop(opstackn/2);
-	expraiz->e = novoop(opstack[n/2 -1]);
-	expraiz->d = novoop(opstack[n/2 +1]);
-	if (opstack(n-1)==0 || opstack(n+1) == n) {
-		struct no* no = novoop(exp(search[n]));
-		no->e = novono(exp(search[n]-1));
-		no->d = novono(exp(search[n]+1));
-	}
-	opstack[n/2];
-	for (size_t i = 0; i < strlen(exp); i++) {
-		if (!isOperator(exp[i])) {novop} //Número
-		else /*operador*/{
-
+struct no* cartree (char expr[]){
+	int x = strlen(expr), n=0/*quantidade de operadores*/, search[10];
+	char opstack[x];
+	for (size_t i = 0; i < x; i++) {
+		opstack[i]='\0';//zera a pilha para comparação
+		if(isOperator(expr[i])) {//verifica se é operador e caso sim, adiciona a pilha e coloca seu indice no vetor de busca
+			opstack[n]=expr[i];
+			search[n]=i;
+			n++;
 		}
 	}
+
+	int mid = n/2/*indice da raiz*/;
+	int e=mid-2/*indice da esquerda*/, d=mid+2/*indice da direita*/;
+	struct no* aux;
+	/*if (n=1){}
+	if (n=2){}
+	if (n=>3){}*/
+
+	//construção da raiz
+	struct no* expraiz = novop(opstack[mid]);
+	expraiz->e = novop(opstack[mid-1]);
+	expraiz->d = novop(opstack[mid+1]);
+	//construção da subárvore a esquerda
+	aux=expraiz->e;
+	e=0;
+		if (e == 0) {//caso de ser último operador da esquerda
+			expraiz->e->d = constructfOpNode(opstack[e], expr[search[e]-1] - '0', expr[search[e]+1] - '0');//novop(opstack[j]);
+			expraiz->e->e = novono( expr[search[mid-1] + 1] - '0');
+			//aux->d->e = novono(expraiz[search[e]-1]);
+			//aux->d->e = novono(expraiz[search[e]+1]);
+		}
+		//else (){}//Caso que irá possuir dois operadores como folhas
+
+	//construção da subárvore a direita
+ d=5;
+		if (d == 5) {//caso de ser último operador da direita
+			expraiz->e->d = constructfOpNode(opstack[d], expr[search[d]-1] - '0', expr[search[d]+1] - '0');
+			expraiz->e->e = novono(expr[search[mid+1] - 1] - '0');
+		}
+	return expraiz;
 }
 
 //Função para retornar o primeiro nó da pré-ordem (L5e5)
@@ -381,5 +424,10 @@ int main(int argc, char const *argv[]) {
 	printf("\n\n");
 	printperlvl(raiz);
 	printf("\n\n");
+	char expressao[20] = "3+2-1*6+4-2";
+
+	struct no* u = creatExptree();
+	int p = valtree(u);
+	printf("%d\n\n", p);
   return 0;
 }
