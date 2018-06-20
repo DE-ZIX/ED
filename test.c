@@ -1,219 +1,132 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-#include<conio.h>
-
-#include<ctype.h>
-
-
-
-#define size 20
-
-typedef struct node { char data;
-
-struct node *left;
-
-struct node *right;
-
-}
-
-btree;
-			/*stack stores the operand nodes of the tree*/
-btree *stack[size];
-
-int top;
-
-void main() {
-
-btree *root;
-
-char exp[80];
-		/*exp stores postfix expression*/
-
-btree *create(char exp[80]);
-
-void inorder(btree *root);
-
-void preorder(btree *root);
-
-void postorder(btree *root);
-
-
-printf("\n enter the postfix expression:\n");
-
-scanf("%s",exp);
-
-top=-1;			/*Initialize the stack*/
-
-root=create(exp);
-
-printf("\n The tree is created.....\n");
-
-printf("\n Inorder traversal: \n\n");
-
-inorder(root);
-
-printf("\n Preorder traversal: \n\n");
-
-preorder(root);
-
-printf("\n Postorder traversal: \n\n");
-
-postorder(root);
-
-getch();
-
-}
-
-btree *create(char exp[])
-
+// Stack type
+struct Stack
 {
+    int top;
+    unsigned capacity;
+    int* array;
+};
 
-btree *temp;
-
-int pos;
-
-char ch;
-
-
-void push(btree*);
-
-btree *pop();
-
-pos=0;
-
-ch=exp[pos];
-
-while(ch!='\0')
-
+// Stack Operations
+struct Stack* createStack( unsigned capacity )
 {
-			/*create new node*/
+    struct Stack* stack = (struct Stack*) malloc(sizeof(struct Stack));
 
-temp=((btree*)malloc(sizeof(btree)));
+    if (!stack)
+        return NULL;
 
-temp->left=temp->right=NULL;
+    stack->top = -1;
+    stack->capacity = capacity;
 
-temp->data=ch;
+    stack->array = (int*) malloc(stack->capacity * sizeof(int));
 
-if(isalpha(ch))
-
-push(temp);
-
-else if(ch=='+' ||ch=='-' || ch=='*' || ch=='/')
-
-{ temp->right=pop();
-
-temp->left=pop();
-
-push(temp);
-
+    if (!stack->array)
+        return NULL;
+    return stack;
 }
- else
-
-printf("\n Invalid char Expression\n");
-
-pos++;
-
-ch=exp[pos];
-
-}
-
- temp=pop();
-
-return(temp);
-
-}
-
-void push(btree *Node)
-
+int isEmpty(struct Stack* stack)
 {
-
-if(top+1
-
->=size)
-
-printf("Error:Stack is full\n");
-
-top++;
-
-stack[top]=Node;
-
+    return stack->top == -1 ;
 }
-
-btree* pop()
-
+char peek(struct Stack* stack)
 {
-
-btree *Node;
-
-if(top==-1)
-
-printf("\nerror: stack is empty..\n");
-
-Node =stack[top];
-
-top--;
-
-return(Node);
-
+    return stack->array[stack->top];
+}
+char pop(struct Stack* stack)
+{
+    if (!isEmpty(stack))
+        return stack->array[stack->top--] ;
+    return '$';
+}
+void push(struct Stack* stack, char op)
+{
+    stack->array[++stack->top] = op;
 }
 
 
-/* functions for tree traversal*/
-
-void inorder(btree *root)
-
-
+// A utility function to check if the given character is operand
+int isOperand(char ch)
 {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+}
 
-btree *temp;
-
-temp=root;
-
-if(temp!=NULL)
-
-{ inorder(temp->left);
-
-printf("%c",temp->data);
-
-inorder(temp->right);
-
-}}
-
-void preorder(btree *root)
-
+// A utility function to return precedence of a given operator
+// Higher returned value means higher precedence
+int Prec(char ch)
 {
+    switch (ch)
+    {
+    case '+':
+    case '-':
+        return 1;
 
-btree *temp;
+    case '*':
+    case '/':
+        return 2;
 
-temp=root;
+    case '^':
+        return 3;
+    }
+    return -1;
+}
 
-if(temp!=NULL)
 
+// The main function that converts given infix expression
+// to postfix expression.
+int infixToPostfix(char* exp)
 {
+    int i, k;
 
-printf("%c",temp->data);
+    // Create a stack of capacity equal to expression size
+    struct Stack* stack = createStack(strlen(exp));
+    if(!stack) // See if stack was created successfully
+        return -1 ;
 
-preorder(temp->left);
+    for (i = 0, k = -1; exp[i]; ++i)
+    {
+        // If the scanned character is an operand, add it to output.
+        if (isOperand(exp[i]))
+            exp[++k] = exp[i];
 
-preorder(temp->right);
+        // If the scanned character is an ‘(‘, push it to the stack.
+        else if (exp[i] == '(')
+            push(stack, exp[i]);
 
-}}
+        // If the scanned character is an ‘)’, pop and output from the stack
+        // until an ‘(‘ is encountered.
+        else if (exp[i] == ')')
+        {
+            while (!isEmpty(stack) && peek(stack) != '(')
+                exp[++k] = pop(stack);
+            if (!isEmpty(stack) && peek(stack) != '(')
+                return -1; // invalid expression
+            else
+                pop(stack);
+        }
+        else // an operator is encountered
+        {
+            while (!isEmpty(stack) && Prec(exp[i]) <= Prec(peek(stack)))
+                exp[++k] = pop(stack);
+            push(stack, exp[i]);
+        }
 
-void postorder(btree *root)
+    }
 
+    // pop all the operators from the stack
+    while (!isEmpty(stack))
+        exp[++k] = pop(stack );
+
+    exp[++k] = '\0';
+    printf( "%sn", exp );
+}
+
+// Driver program to test above functions
+int main()
 {
-
-btree *temp;
-
-temp=root;
-
-if(temp!=NULL)
-
-{
-postorder(temp->left);
-
-postorder(temp->right);
-
-printf("%c",temp->data);
-
-}}
+    char exp[] = "a+b*(c^d-e)^(f+g*h)-i";
+    infixToPostfix(exp);
+    return 0;
+}
