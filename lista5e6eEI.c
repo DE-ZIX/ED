@@ -1,10 +1,138 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
+#include <ctype.h>
+
+
+
+#define size 20
 
 /*Exercícios que faltam
 Lista 5: 6
 Lista 6: 4*/
+
+// Stack type
+struct Stack
+{
+    int top;
+    unsigned capacity;
+    int* array;
+};
+
+// Stack Operations
+struct Stack* createStack( unsigned capacity )
+{
+    struct Stack* stack = (struct Stack*) malloc(sizeof(struct Stack));
+
+    if (!stack)
+        return NULL;
+
+    stack->top = -1;
+    stack->capacity = capacity;
+
+    stack->array = (int*) malloc(stack->capacity * sizeof(int));
+
+    if (!stack->array)
+        return NULL;
+    return stack;
+}
+int isEmpty(struct Stack* stack)
+{
+    return stack->top == -1 ;
+}
+char peek(struct Stack* stack)
+{
+    return stack->array[stack->top];
+}
+char pop(struct Stack* stack)
+{
+    if (!isEmpty(stack))
+        return stack->array[stack->top--] ;
+    return '$';
+}
+void push(struct Stack* stack, char op)
+{
+    stack->array[++stack->top] = op;
+}
+
+
+// A utility function to check if the given character is operand
+int isOperand(char ch)
+{
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+}
+
+// A utility function to return precedence of a given operator
+// Higher returned value means higher precedence
+int Prec(char ch)
+{
+    switch (ch)
+    {
+    case '+':
+    case '-':
+        return 1;
+
+    case '*':
+    case '/':
+        return 2;
+
+    case '^':
+        return 3;
+    }
+    return -1;
+}
+
+
+// The main function that converts given infix exprrression
+// to postfix exprression.
+char infixToPostfix(char expr[])
+{
+    int i, k;
+
+    // Create a stack of capacity equal to exprression size
+    struct Stack* stack = createStack(strlen(expr));
+    if(!stack) // See if stack was created successfully
+        return -1 ;
+
+    for (i = 0, k = -1; expr[i]; ++i)
+    {
+        // If the scanned character is an operand, add it to output.
+        if (isOperand(expr[i]))
+            expr[++k] = expr[i];
+
+        // If the scanned character is an ‘(‘, push it to the stack.
+        else if (expr[i] == '(')
+            push(stack, expr[i]);
+
+        // If the scanned character is an ‘)’, pop and output from the stack
+        // until an ‘(‘ is encountered.
+        else if (expr[i] == ')')
+        {
+            while (!isEmpty(stack) && peek(stack) != '(')
+                expr[++k] = pop(stack);
+            if (!isEmpty(stack) && peek(stack) != '(')
+                return -1; // invalid exprression
+            else
+                pop(stack);
+        }
+        else // an operator is encountered
+        {
+            while (!isEmpty(stack) && Prec(expr[i]) <= Prec(peek(stack)))
+                expr[++k] = pop(stack);
+            push(stack, expr[i]);
+        }
+
+    }
+
+    // pop all the operators from the stack
+    while (!isEmpty(stack))
+        expr[++k] = pop(stack );
+
+    expr[++k] = '\0';
+    printf( "%sn", expr );
+    return expr;
+}
 
 
 //Estrutura da árvore binária (EI e2la)
@@ -14,6 +142,11 @@ struct no{
 	struct no* e;
 	struct no* d;
 };
+
+			/*stack1 stores the operand nodes of the tree*/
+struct no *stack1[size];
+
+int top;
 
 //algoritmo que cria novo no
 struct no* novono(int info) {
@@ -269,45 +402,58 @@ int tam(struct no* no){
 	return contanos(no);
 }
 
-//Função para criar árvore artimética
-//subfunção para verificar se o nó é operador
-int isOperator(char c){
-    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') return 1;
-    return 0;
-}
-//Função para criar árvore artimética
-int g=0;
-char result[20];
-char creats(int n, char c[n]){
-	int mid;
-	char *e, *d;
-	if(isOperator(c[n/2])) mid = n/2;
-	else mid=(n/2)+1;
-	result[g] = mid;
-	g++;
-	if(n==0) return c[0];
-	e = (char * )malloc(mid);
-	d = (char * )malloc((n-mid));
-	if(!(mid-1<0))for (size_t z = 0; z < mid-1; z++) e[z] = c[z];
-	if(!(mid-1<0))for (size_t j = mid+1; j < n; j++) d[j-mid] = c[j];
-	creats(mid,e);
-	creats(n-mid,d);
+//Função para criar e retornar valor de árvore aritimetica dado um array em infix
+int cal(char c[]){
+	c = infixToPostfix(c);
+	return valtree(create(c));
 }
 
-/*struct no* creatExptree(char expr[], int in){
-	struct no* raiz;
-	char op;
-	if (!isOperator(expr[in])) return novono(expr[in] - '0');
-	else raiz = novop(expr[in]);
-	in++;
-	if (isOperator(expr[in])) {raiz->e = creatExptree(expr[in]);}
-	else raiz->e = novono(op - '0');
-	printf("Digite o num2: ");
-	scanf(" %c", &op);
-	if (isOperator(op)) {raiz->d = creatExptree();}
-	else raiz->d = novono(op - '0');
-	return raiz;
-}*/
+//Função para criar árvore artimética
+
+//subfunção para criar árvore artimética dada um array em infix
+struct no *create(char exp[]) {
+	struct no *temp;
+	int pos;
+	char ch;
+	void push(struct no*);
+	struct no *pop();
+	pos=0;
+	ch=exp[pos];
+	while(ch!='\0')	{
+			/*create new node*/
+		temp=((struct no*)malloc(sizeof(struct no)));
+		temp->e=temp->d=NULL;
+		temp->op=ch;
+		if(isalpha(ch)) push(temp);
+		else if(ch=='+' ||ch=='-' || ch=='*' || ch=='/') { temp->d=pop();temp->e=pop();push(temp);}
+		else printf("\n Invalid char Expression\n");
+		pos++;
+		ch=exp[pos];
+		}
+
+	temp=pop();
+
+	return(temp);
+
+}
+//subfunão para converter de infix para postfix
+
+void push(struct no *no){
+	if(top+1>=size)
+	printf("Error:stack1 is full\n");
+	top++;
+	stack1[top]=no;
+}
+
+struct no* pop(){
+	struct no *no;
+	if(top==-1)
+	printf("\nerror: stack1 is empty..\n");
+	no =stack1[top];
+	top--;
+	return(no);
+}
+
 
 //Função para retornar o primeiro nó da pré-ordem (L5e5)
 int fpre(struct no *n){
@@ -390,8 +536,7 @@ int main(int argc, char const *argv[]) {
 	printperlvl(raiz);
 	printf("\n\n");
 	char expressao[11] = "3+2-1*6+4-2";
-	creats(11,expressao);
-	printf("%c", result);
+	printf("%d\n\n", cal(expressao));
 	//struct no* u = creatExptree();
 	//int p = valtree(u);
 	//printf("%d\n\n", p);
