@@ -1,0 +1,4 @@
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c: In function 'create':
+C:\Users\Giovani Henriques\Documents\GitHub\ED\lista5e6eEI.c:417:8: error: expected expression before 'struct'
+   push(struct no* temp);
+        ^~~~~~
